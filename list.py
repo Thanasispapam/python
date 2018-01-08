@@ -1,6 +1,6 @@
 import argparse
 import sys
-
+import os
 
 parser = argparse.ArgumentParser(description='Something')
 
@@ -10,9 +10,8 @@ parser.add_argument('-i', '--id', type=int, help='The id of the user', required=
 parser.add_argument('-e', '--email', type=str, help='The email of the user', required=False, dest="email", action="store")
 parser.add_argument('-f', '--first-name', type=str, help='The first name of the user', required=False, dest="firstName", action="store")
 parser.add_argument('-l', '--last-name', type=str, help='The last name of the user', required=False, dest="lastName", action="store")
-
+parser.add_argument('--file', type=str, help='The name of the file', required=False, default='list.txt', dest="file", action="store")
 args = parser.parse_args()
-
 
 def create(email, firstName, lastName):
     print("Create user with:")
@@ -48,6 +47,7 @@ if (args.action == "create"):
 elif (args.action == "delete"):
     if (args.Id == None):
         print ("Please check your arguments")
+        sys.exit(1)
         
     delete(args.Id)
 
@@ -57,4 +57,5 @@ elif (args.action == "list"):
 else:
     if (args.Id==None):
         print ("Please check your arguments")
+        sys.exit(1)
     read(args.Id)
