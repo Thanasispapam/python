@@ -54,19 +54,30 @@ def create(file, email, firstName, lastName):
 
 # Connect to database and create user
 
-def delete(userId):
-    print ("Deleted user with :")
-    print "Id: %s" % userId
+def delete(file, userId):
+    users = []
+    with open(file,"r")as f:
+        for line in f:
+            line = line.strip()
+            Id = getId(line)
+            if not (userId == int(Id)):
+                users.append(line)
+
+    with open(file, "w")as f:
+        for user in users:
+            f.write(user)
+            f.write("\n")
+
 
 def list(file):
-    with open("list.txt","r")as f:
+    with open(file,"r")as f:
         for line in f:
             printUser(line)
             
     
 
-def read(userId):
-    with open("list.txt","r")as f:
+def read(file, userId):
+    with open(file,"r")as f:
         for line in f:
             line = line.strip()
             Id = getId(line)
@@ -100,13 +111,13 @@ elif (args.action == "delete"):
         print ("Please check your arguments")
         sys.exit(1)
         
-    delete(args.Id)
+    delete(args.file, args.Id)
 
 elif (args.action == "list"):
-    list("The list is")
+    list(args.file)
 
 else:
     if (args.Id==None):
         print ("Please check your arguments")
         sys.exit(1)
-    read(args.Id)
+    read(args.file, args.Id)
