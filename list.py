@@ -1,6 +1,7 @@
 import argparse
 import sys
 import os
+import re
 
 parser = argparse.ArgumentParser(description='Something')
 
@@ -13,20 +14,43 @@ parser.add_argument('-l', '--last-name', type=str, help='The last name of the us
 parser.add_argument('--file', type=str, help='The name of the file', required=False, default='list.txt', dest="file", action="store")
 args = parser.parse_args()
 
+
+# Util methods for reading file
+def getLinePart(line, part):
+
+    m = re.search('^(.*):(.*):(.*):(.*)$', line)
+    if m:
+        return m.group(part)
+    else:
+        return None
+
+def getId(line):
+    return getLinePart(line, 1)
+
+def getEmail(line):
+    return getLinePart(line, 2)
+
+def getFirstName(line):
+    return getLinePart(line, 3)
+
+def getLastName(line):
+    return getLinePart(line, 4)
+
+def printUser(line):
+    line = line.strip()
+    Id = getId(line)
+    email = getEmail(line)
+    firstName = getFirstName(line)
+    lastName = getLastName(line)
+    print "Id: %s\t" % Id, "Email: %s\t" % email, "First Name: %s\t" %firstName, "Last Name: %s\n" %lastName
+
+
 def create(file, email, firstName, lastName):
     with open(file,"a")as f:
         lines_of_text=["%s:" % email,"%s:" % email,"%s:" % firstName,"%s\n" % lastName]
         f.writelines(lines_of_text)
-        #f.write("Id: %s" % email)
-        #f.write("Email: %s", % email, "\t")
-        #f.write("First Name: %s", % firstName, "\t")
-        #f.write("Last Name: %s", % lastName, "\n")
 
     print ("Successfuly created user %s %s %s", email, firstName, lastName)
-    #print("Create user with:")
-    #print "Email: %s" % email
-    #print "First name: %s" % firstName
-    #print "lastName: %s" % lastName
 
 # Connect to database and create user
 
@@ -34,12 +58,24 @@ def delete(userId):
     print ("Deleted user with :")
     print "Id: %s" % userId
 
-def list():
-    print ("List of users")
+def list(file):
+    with open("list.txt","r")as f:
+        for line in f:
+            printUser(line)
+            
+    
 
 def read(userId):
-    print ("Read users account with: ")
-    print "Id: %s" % userId
+    with open("list.txt","r")as f:
+        for line in f:
+            line = line.strip()
+            Id = getId(line)
+            if (userId == int(Id)):
+                printUser(line)
+                return
+    
+    print "User with id: %s not found\n" %userId
+
 
 
 
@@ -67,7 +103,7 @@ elif (args.action == "delete"):
     delete(args.Id)
 
 elif (args.action == "list"):
-    list()
+    list("The list is")
 
 else:
     if (args.Id==None):
