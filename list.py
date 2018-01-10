@@ -17,6 +17,7 @@ args = parser.parse_args()
 
 # Util methods for reading file
 def getLinePart(line, part):
+    line.strip()
 
     m = re.search('^(.*):(.*):(.*):(.*)$', line)
     if m:
@@ -46,11 +47,19 @@ def printUser(line):
 
 
 def create(file, email, firstName, lastName):
+    newId = 0
+    if not (os.stat(file).st_size == 0):
+        with open(file, "r") as f:
+            for line in f:
+                pass
+            last = line
+            newId = int(getId(last)) + 1
+
     with open(file,"a")as f:
-        lines_of_text=["%s:" % email,"%s:" % email,"%s:" % firstName,"%s\n" % lastName]
+        lines_of_text=["%s:" % newId, "%s:" % email,"%s:" % firstName,"%s\n" % lastName]
         f.writelines(lines_of_text)
 
-    print ("Successfuly created user %s %s %s", email, firstName, lastName)
+    print ("Successfuly created user with id: %s", newId)
 
 # Connect to database and create user
 
